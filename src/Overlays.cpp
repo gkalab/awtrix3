@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include "effects.h"
 #include "MQTTManager.h"
+#include "BmpDecoder.h"
 
 
 std::vector<Notification> notifications;
@@ -84,7 +85,7 @@ void NotifyOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPl
     CURRENT_APP = F("Notification");
 
     // Check if notification has an icon
-    bool hasIcon = notifications[0].icon || notifications[0].jpegDataSize > 0;
+    bool hasIcon = notifications[0].icon || notifications[0].imageDataSize > 0;
 
     // Clear the matrix display
     DisplayManager.drawFilledRect(0, 0, 32, 8, notifications[0].background);
@@ -142,9 +143,19 @@ void NotifyOverlay(FastLED_NeoMatrix *matrix, MatrixDisplayUiState *state, GifPl
             else
             {
                 iconWidth = 8;
-                if (notifications[0].jpegDataSize > 0)
+                if (notifications[0].imageDataSize > 0)
                 {
-                    DisplayManager.drawJPG(notifications[0].iconPosition + notifications[0].iconOffset, 0, notifications[0].jpegDataBuffer, notifications[0].jpegDataSize);
+                    BmpDecoder decoder;
+                    std::vector<uint16_t> imageData = decoder.extractImageData(notifications[0].imageDataBuffer, notifications[0].imageDataSize, iconWidth, iconWidth);
+                    if (!imageData.empty())
+                    {
+                        DisplayManager.drawBMP(notifications[0].iconPosition + notifications[0].iconOffset, 0, imageData.data(), iconWidth, iconWidth);
+                    }
+                    else
+                    {
+                        // not a bmp image, try jpg
+                        DisplayManager.drawJPG(notifications[0].iconPosition + notifications[0].iconOffset, 0, notifications[0].imageDataBuffer, notifications[0].imageDataSize);
+                    }
                 }
                 else
                 {

@@ -949,12 +949,12 @@ bool DisplayManager_::generateNotification(uint8_t source, const char *json)
 
     if (iconValue.length() > 64)
     {
-      newNotification.jpegDataSize = decode_base64((const unsigned char *)iconValue.c_str(), newNotification.jpegDataBuffer);
+      newNotification.imageDataSize = decode_base64((const unsigned char *)iconValue.c_str(), newNotification.imageDataBuffer);
       newNotification.isGif = false;
     }
     else
     {
-      newNotification.jpegDataSize = 0;
+      newNotification.imageDataSize = 0;
       if (LittleFS.exists("/ICONS/" + iconValue + ".jpg"))
       {
         newNotification.isGif = false;
@@ -977,7 +977,7 @@ bool DisplayManager_::generateNotification(uint8_t source, const char *json)
   {
     fs::File nullPointer;
     newNotification.icon = nullPointer;
-    newNotification.jpegDataSize = 0;
+    newNotification.imageDataSize = 0;
     newNotification.isGif = false;
   }
 

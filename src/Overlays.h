@@ -51,8 +51,8 @@ struct Notification
     String rtttl;
     OverlayEffect overlay;
     int gradient[2] = {0};
-    uint8_t jpegDataBuffer[1000];
-    unsigned int jpegDataSize = 0;
+    uint8_t imageDataBuffer[1000];
+    unsigned int imageDataSize = 0;
 };
 
 
